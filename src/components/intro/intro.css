@@ -1,0 +1,13 @@
+.intro {
+  display: flex;
+  flex-direction: column;
+}
+
+.intro__title {
+  font-size: 2rem;
+  margin-bottom: 7px;
+}
+
+.intro__description {
+  margin-bottom: 30px;
+}
