@@ -1,8 +1,7 @@
-# React + Vite
+# Quiz yourself!
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This fun quiz app lets your test your trivia knowledge in a range of subjects.
 
-Currently, two official plugins are available:
+Created with React + Vite.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Questions are from the [Open Trivia DB](https://opentdb.com/api_config.php).
