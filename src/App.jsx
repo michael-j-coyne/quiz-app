@@ -9,7 +9,7 @@ function App() {
   const [triviaItems, setTriviaItems] = useState([]);
 
   useEffect(() => {
-    const stuff = fetch(
+    fetch(
       "https://opentdb.com/api.php?amount=5&category=10&difficulty=easy&type=multiple"
     )
       .then((res) => res.json())
