@@ -4,8 +4,8 @@ import "./trivia-item.css";
 export default function TriviaItem(props) {
   const optionElems = props.options.map((option) => (
     <button
-      className={`trivia-item__option ${
-        option.selected && "trivia-item__option_selected"
+      className={`trivia-item__option${
+        option.selected ? " trivia-item__option_selected" : ""
       }`}
       key={nanoid()}
       onClick={() => props.setSelectedOption(option.id)}
