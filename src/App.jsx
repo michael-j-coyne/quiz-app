@@ -3,6 +3,7 @@ import "./App.css";
 import Intro from "./components/intro/Intro";
 import TriviaItem from "./components/trivia-item/TriviaItem";
 import { nanoid } from "nanoid";
+import { decode } from "html-entities";
 
 function App() {
   const [triviaItems, setTriviaItems] = useState([]);
@@ -47,7 +48,7 @@ function App() {
   function transformResponse(response) {
     return response.results.map((triviaItem) => ({
       id: nanoid(),
-      question: triviaItem.question,
+      question: decode(triviaItem.question),
       options: generateOptionsObjects([
         ...triviaItem.incorrect_answers,
         triviaItem.correct_answer,
