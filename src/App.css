@@ -22,3 +22,9 @@ body {
   padding: 2rem;
   text-align: center;
 }
+
+.trivia-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}

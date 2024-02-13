@@ -71,7 +71,7 @@ function App() {
   return (
     <>
       {/* <Intro /> */}
-      {triviaItemElems}
+      <div className="trivia-item-list">{triviaItemElems}</div>
     </>
   );
 }
