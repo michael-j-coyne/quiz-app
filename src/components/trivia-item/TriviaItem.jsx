@@ -8,7 +8,7 @@ export default function TriviaItem(props) {
         option.selected && "trivia-item__option_selected"
       }`}
       key={nanoid()}
-      onClick={() => props.setSelected(option.id)}
+      onClick={() => props.setSelectedOption(option.id)}
     >
       {option.text}
     </button>

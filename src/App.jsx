@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import Intro from "./components/intro/Intro";
-import TriviaItem from "./components/question/TriviaItem";
+import TriviaItem from "./components/trivia-item/TriviaItem";
 import { nanoid } from "nanoid";
 
 function App() {
@@ -63,7 +63,7 @@ function App() {
       question={item.question}
       options={item.options}
       selected={item.selected}
-      setSelected={(optionId) => setSelectedOption(item.id, optionId)}
+      setSelectedOption={(optionId) => setSelectedOption(item.id, optionId)}
     />
   ));
 
