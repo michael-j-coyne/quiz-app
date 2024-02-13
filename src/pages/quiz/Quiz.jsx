@@ -6,6 +6,7 @@ import "./quiz.css";
 
 export default function Quiz() {
   const [triviaItems, setTriviaItems] = useState([]);
+  const numQuestions = 5;
 
   function checkResponseOk(res) {
     if (!res.ok) {
@@ -66,9 +67,10 @@ export default function Quiz() {
     }));
   }
 
-  const triviaItemElems = triviaItems.map((item) => (
+  const triviaItemElems = triviaItems?.map((item) => (
     <TriviaItem
       key={item.id}
+      isLoading={false}
       question={item.question}
       options={item.options}
       selected={item.selected}
@@ -78,7 +80,11 @@ export default function Quiz() {
 
   return (
     <>
-      <div className="trivia-item-list">{triviaItemElems}</div>
+      <div className="trivia-item-list">
+        {triviaItemElems.length > 0
+          ? triviaItemElems
+          : new Array(numQuestions).fill(<TriviaItem skeleton={true} />)}
+      </div>
     </>
   );
 }
