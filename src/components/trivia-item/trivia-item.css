@@ -1,5 +1,12 @@
 .question {
   --option-selected-color: 214, 219, 245;
+  min-width: 340px;
+}
+
+@media only screen and (min-width: 768px) {
+  .question {
+    min-width: 728px;
+  }
 }
 
 .trivia-item__title {
