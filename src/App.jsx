@@ -8,13 +8,22 @@ import { decode } from "html-entities";
 function App() {
   const [triviaItems, setTriviaItems] = useState([]);
 
+  function checkResponseOk(res) {
+    if (!res.ok) {
+      throw new Error(`${res.status} ${res.statusText}`);
+    }
+    return res;
+  }
+
   useEffect(() => {
     fetch(
       "https://opentdb.com/api.php?amount=5&category=10&difficulty=easy&type=multiple"
     )
+      .then((res) => checkResponseOk(res))
       .then((res) => res.json())
-      .then((json) => transformResponse(json))
-      .then((items) => setTriviaItems(items));
+      .then((json) => toObjects(json))
+      .then((items) => setTriviaItems(items))
+      .catch((error) => console.log(error));
   }, []);
 
   function generateOptionsObjects(optionsArr) {
@@ -45,7 +54,7 @@ function App() {
     );
   }
 
-  function transformResponse(response) {
+  function toObjects(response) {
     return response.results.map((triviaItem) => ({
       id: nanoid(),
       question: decode(triviaItem.question),
