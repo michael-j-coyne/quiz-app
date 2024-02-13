@@ -14,17 +14,12 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 0;
 }
 
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem;
   text-align: center;
-}
-
-.trivia-item-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
 }
