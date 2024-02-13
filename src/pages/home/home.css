@@ -1,6 +1,7 @@
 .home {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .home__title {
@@ -10,4 +11,13 @@
 
 .home__description {
   margin-bottom: 30px;
+}
+
+.home__button {
+  width: 50%;
+  background: lightblue;
+  border-radius: 8px;
+  padding: 4px 8px;
+  text-decoration: none;
+  color: #293264;
 }
