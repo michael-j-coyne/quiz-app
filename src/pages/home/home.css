@@ -1,13 +1,13 @@
-.intro {
+.home {
   display: flex;
   flex-direction: column;
 }
 
-.intro__title {
+.home__title {
   font-size: 2rem;
   margin-bottom: 7px;
 }
 
-.intro__description {
+.home__description {
   margin-bottom: 30px;
 }

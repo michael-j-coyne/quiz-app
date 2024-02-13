@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
-import Intro from "./components/intro/Intro";
+import Home from "./pages/home/Home";
 import TriviaItem from "./components/trivia-item/TriviaItem";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
@@ -79,7 +79,7 @@ function App() {
 
   return (
     <>
-      {/* <Intro /> */}
+      {/* <Home /> */}
       <div className="trivia-item-list">{triviaItemElems}</div>
     </>
   );
