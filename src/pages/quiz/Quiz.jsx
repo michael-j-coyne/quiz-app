@@ -25,16 +25,20 @@ export default function Quiz() {
       .then((res) => checkResponseOk(res))
       .then((res) => res.json())
       .then((json) => toObjects(json))
-      .then((obj) => {
-        const newFormData = {};
-        Object.entries(obj).forEach(([id, obj]) => (newFormData[id] = ""));
-        setFormData(newFormData);
-
-        setTriviaItems(obj);
-        return obj;
+      .then((triviaItemsObj) => {
+        setTriviaItems(triviaItemsObj);
+        return triviaItemsObj;
       })
       .catch((error) => console.log(error));
   }, []);
+
+  useEffect(() => {
+    const newFormData = {};
+    Object.entries(triviaItems).forEach(
+      ([id, triviaItems]) => (newFormData[id] = "")
+    );
+    setFormData(newFormData);
+  }, [triviaItems]);
 
   function handleChange(event) {
     const { name, value } = event.target;
