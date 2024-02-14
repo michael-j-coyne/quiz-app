@@ -38,10 +38,11 @@ export default function Quiz() {
 
   function handleChange(event) {
     const { name, value } = event.target;
+    const questionId = name;
 
     setFormData((prevFormData) => ({
       ...prevFormData,
-      [name]: value,
+      [questionId]: value,
     }));
   }
 
