@@ -5,8 +5,8 @@ import { decode } from "html-entities";
 import "./quiz.css";
 
 export default function Quiz() {
-  const [triviaItems, setTriviaItems] = useState([]);
-  const [formData, setFormData] = useState([]); // { questionId: userAnswer }
+  const [triviaItems, setTriviaItems] = useState({});
+  const [formData, setFormData] = useState({}); // { questionId: userAnswer }
   const numQuestions = 5;
 
   function checkResponseOk(res) {
@@ -25,13 +25,13 @@ export default function Quiz() {
       .then((res) => checkResponseOk(res))
       .then((res) => res.json())
       .then((json) => toObjects(json))
-      .then((obj_arr) => {
+      .then((obj) => {
         const newFormData = {};
-        obj_arr.forEach((obj) => (newFormData[obj.id] = ""));
+        Object.entries(obj).forEach(([id, obj]) => (newFormData[id] = ""));
         setFormData(newFormData);
 
-        setTriviaItems(obj_arr);
-        return obj_arr;
+        setTriviaItems(obj);
+        return obj;
       })
       .catch((error) => console.log(error));
   }, []);
@@ -48,15 +48,19 @@ export default function Quiz() {
 
   function toObjects(response) {
     // What if there is no response.results?
-    return response.results.map((triviaItem) => ({
-      id: nanoid(),
-      question: decode(triviaItem.question),
-      options: randomizeArray([
-        ...triviaItem.incorrect_answers.map((ans) => decode(ans)),
-        decode(triviaItem.correct_answer),
-      ]),
-      answer: triviaItem.correct_answer,
-    }));
+    const obj = {};
+    response.results.forEach(
+      (triviaItem) =>
+        (obj[nanoid()] = {
+          question: decode(triviaItem.question),
+          options: randomizeArray([
+            ...triviaItem.incorrect_answers.map((ans) => decode(ans)),
+            decode(triviaItem.correct_answer),
+          ]),
+          answer: triviaItem.correct_answer,
+        })
+    );
+    return obj;
   }
 
   function checkAnswers(event) {
@@ -67,10 +71,10 @@ export default function Quiz() {
     );
   }
 
-  const triviaItemElems = triviaItems.map((item) => (
+  const triviaItemElems = Object.entries(triviaItems).map(([id, item]) => (
     <TriviaItem
-      key={item.id}
-      questionId={item.id}
+      key={id}
+      questionId={id}
       question={item.question}
       options={item.options}
       handleChange={handleChange}
