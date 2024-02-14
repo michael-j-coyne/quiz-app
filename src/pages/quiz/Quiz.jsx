@@ -59,6 +59,14 @@ export default function Quiz() {
     }));
   }
 
+  function checkAnswers(event) {
+    event.preventDefault();
+    console.log("you checked the answers");
+    Object.entries(formData).forEach(([id, ans]) =>
+      console.log(`${id} ${ans}`)
+    );
+  }
+
   const triviaItemElems = triviaItems.map((item) => (
     <TriviaItem
       key={item.id}
@@ -71,12 +79,13 @@ export default function Quiz() {
 
   return (
     <>
-      <form className="trivia-item-list">
+      <form onSubmit={checkAnswers} className="trivia-item-list">
         {triviaItemElems.length > 0
           ? triviaItemElems
           : new Array(numQuestions)
               .fill(0)
               .map(() => <TriviaItem key={nanoid()} skeleton={true} />)}
+        <button>Check answers</button>
       </form>
     </>
   );
