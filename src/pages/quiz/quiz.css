@@ -10,6 +10,8 @@
   --option-selected-color: 214, 219, 245;
   min-width: 340px;
   border: none;
+  display: flex;
+  flex-direction: column;
 }
 
 @media only screen and (min-width: 768px) {
@@ -30,6 +32,15 @@
   display: flex;
   gap: 12px;
   margin-bottom: 15px;
+}
+
+.trivia-item__error-message {
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+
+  font-size: 0.625rem;
+  background: #ffcccc;
 }
 
 .trivia-item__line {
