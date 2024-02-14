@@ -33,6 +33,10 @@
   }
 }
 
+.radio-button input[type="radio"]:focus + label {
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
 .radio-button input[type="radio"]:checked + label {
   border-radius: 8px;
 
