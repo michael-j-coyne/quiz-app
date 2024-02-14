@@ -66,7 +66,15 @@ export default function Quiz() {
 
   function checkAnswers(data) {
     console.log("you checked the answers");
-    console.log(data);
+    Object.entries(data).forEach(([itemId, answer]) => {
+      if (answer != triviaItems[itemId].answer) {
+        console.log(
+          `${answer} is incorrect! Correct answer is ${triviaItems[itemId].answer}`
+        );
+      } else {
+        console.log(`${answer} is correct!`);
+      }
+    });
   }
 
   const triviaItemElems = Object.entries(triviaItems).map(([itemId, item]) => {
