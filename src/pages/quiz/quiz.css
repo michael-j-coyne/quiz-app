@@ -103,8 +103,6 @@
 }
 
 .radio-button input[type="radio"]:checked + label {
-  border-radius: 8px;
-
   background: rgb(var(--option-selected-color));
 
   &:hover {
