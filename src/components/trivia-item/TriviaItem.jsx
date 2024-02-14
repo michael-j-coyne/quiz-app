@@ -2,29 +2,12 @@ import { nanoid } from "nanoid";
 import "./trivia-item.css";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-
-function RadioInput({ value, labelText, checked, name, handleChange }) {
-  const id = nanoid();
-
-  return (
-    <>
-      <input
-        type="radio"
-        name={name}
-        value={value}
-        id={id}
-        onChange={handleChange}
-        checked={checked}
-      />
-      <label htmlFor={id}>{labelText}</label>
-    </>
-  );
-}
+import RadioButton from "../radio-button/RadioButton";
 
 export default function TriviaItem(props) {
   const optionElems = props.options?.map((optionText) => {
     return (
-      <RadioInput
+      <RadioButton
         key={nanoid()}
         value={optionText}
         labelText={optionText}
