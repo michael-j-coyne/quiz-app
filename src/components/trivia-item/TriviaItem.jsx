@@ -9,7 +9,7 @@ export default function TriviaItem(props) {
     return (
       <RadioButton
         id={`${props.questionId}_${index}`}
-        key={nanoid()}
+        key={`${props.questionId}_${index}`}
         value={optionText}
         labelText={optionText}
         name={props.questionId}
