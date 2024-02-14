@@ -40,16 +40,6 @@ export default function Quiz() {
     setFormData(newFormData);
   }, [triviaItems]);
 
-  function handleChange(event) {
-    const { name, value } = event.target;
-    const questionId = name;
-
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [questionId]: value,
-    }));
-  }
-
   function toTriviaItemsObject(response) {
     // What if there is no response.results?
 
@@ -78,6 +68,16 @@ export default function Quiz() {
     Object.entries(formData).forEach(([id, ans]) =>
       console.log(`${id} ${ans}`)
     );
+  }
+
+  function handleChange(event) {
+    const { name, value } = event.target;
+    const questionId = name;
+
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [questionId]: value,
+    }));
   }
 
   const triviaItemElems = Object.entries(triviaItems).map(([id, item]) => (
