@@ -16,7 +16,6 @@ export default function RadioButton({
         value={value}
         id={id}
         onChange={handleChange}
-        checked={checked}
       />
       <label htmlFor={id}>{labelText}</label>
     </div>

@@ -65,7 +65,6 @@ export default function Quiz() {
       questionId={item.id}
       question={item.question}
       options={item.options}
-      checkedOption={formData[item.id]}
       handleChange={handleChange}
     />
   ));

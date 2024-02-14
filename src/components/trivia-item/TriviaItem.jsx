@@ -14,7 +14,6 @@ export default function TriviaItem(props) {
         labelText={optionText}
         name={props.questionId}
         handleChange={props.handleChange}
-        checked={props.checkedOption === optionText}
       />
     );
   });
