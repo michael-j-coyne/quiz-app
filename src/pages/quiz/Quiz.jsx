@@ -6,6 +6,7 @@ import "./quiz.css";
 export default function Quiz() {
   const [triviaItems, setTriviaItems] = useState({});
   const [formData, setFormData] = useState({}); // { questionId: userAnswer }
+  const [componentId, setComponentId] = useState(nanoid());
   const numQuestions = 5;
 
   function checkResponseOk(res) {
@@ -54,8 +55,9 @@ export default function Quiz() {
     });
 
     response.results.forEach(
-      (triviaItem) =>
-        (triviaItemsObject[nanoid()] = triviaItemObject(triviaItem))
+      (triviaItem, index) =>
+        (triviaItemsObject[`question-${index + 1}`] =
+          triviaItemObject(triviaItem))
     );
 
     return triviaItemsObject;
@@ -81,7 +83,7 @@ export default function Quiz() {
 
   const triviaItemElems = Object.entries(triviaItems).map(([id, item]) => {
     const optionElems = item.options.map((option, index) => {
-      const identifier = `${id}_${index}`;
+      const identifier = `${id}_option-${index + 1}_${componentId}`;
 
       // The options for answers to the question
       return (
@@ -99,7 +101,7 @@ export default function Quiz() {
     });
 
     return (
-      <fieldset className="trivia-item">
+      <fieldset key={id} className="trivia-item">
         <legend className="trivia-item__title">{item.question}</legend>
         <div className="trivia-item__options-container">{optionElems}</div>
         <hr className="trivia-item__line"></hr>
