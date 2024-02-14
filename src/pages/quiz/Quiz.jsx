@@ -1,4 +1,3 @@
-import TriviaItem from "../../components/trivia-item/TriviaItem";
 import { useState, useEffect } from "react";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
@@ -80,24 +79,38 @@ export default function Quiz() {
     }));
   }
 
-  const triviaItemElems = Object.entries(triviaItems).map(([id, item]) => (
-    <TriviaItem
-      key={id}
-      questionId={id}
-      question={item.question}
-      options={item.options}
-      handleChange={handleChange}
-    />
-  ));
+  const triviaItemElems = Object.entries(triviaItems).map(([id, item]) => {
+    const optionElems = item.options.map((option, index) => {
+      const identifier = `${id}_${index}`;
+
+      // The options for answers to the question
+      return (
+        <div key={identifier} className="radio-button">
+          <input
+            type="radio"
+            name={id}
+            value={option}
+            id={identifier}
+            onChange={handleChange}
+          />
+          <label htmlFor={identifier}>{option}</label>
+        </div>
+      );
+    });
+
+    return (
+      <fieldset className="trivia-item">
+        <legend className="trivia-item__title">{item.question}</legend>
+        <div className="trivia-item__options-container">{optionElems}</div>
+        <hr className="trivia-item__line"></hr>
+      </fieldset>
+    );
+  });
 
   return (
     <>
-      <form onSubmit={checkAnswers} className="trivia-item-list">
-        {triviaItemElems.length > 0
-          ? triviaItemElems
-          : new Array(numQuestions)
-              .fill(0)
-              .map(() => <TriviaItem key={nanoid()} skeleton={true} />)}
+      <form onSubmit={checkAnswers} className="trivia-item-container">
+        {triviaItemElems}
         <button>Check answers</button>
       </form>
     </>
