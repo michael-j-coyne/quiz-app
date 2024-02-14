@@ -5,9 +5,10 @@ import "react-loading-skeleton/dist/skeleton.css";
 import RadioButton from "../radio-button/RadioButton";
 
 export default function TriviaItem(props) {
-  const optionElems = props.options?.map((optionText) => {
+  const optionElems = props.options?.map((optionText, index) => {
     return (
       <RadioButton
+        id={`${props.questionId}_${index}`}
         key={nanoid()}
         value={optionText}
         labelText={optionText}

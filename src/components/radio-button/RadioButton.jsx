@@ -1,4 +1,3 @@
-import { useId } from "react";
 import "./radio-button.css";
 
 export default function RadioButton({
@@ -7,9 +6,8 @@ export default function RadioButton({
   checked,
   name,
   handleChange,
+  id,
 }) {
-  const id = useId();
-
   return (
     <div className="radio-button">
       <input
