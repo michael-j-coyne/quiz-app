@@ -5,6 +5,23 @@
   gap: 15px;
 }
 
+.trivia-item-container__button {
+  background: #4d5b9e;
+  border: 0.8px solid black;
+  border-radius: 8px;
+  width: 120px;
+  padding: 10px 22px;
+
+  color: #f5f7fb;
+  text-align: center;
+  font-size: 0.625rem;
+  font-weight: 600;
+}
+
+.trivia-item-container__button:active {
+  transform: scale(0.98);
+}
+
 /* trivia-item block */
 .trivia-item {
   --option-selected-color: 214, 219, 245;

@@ -113,7 +113,11 @@ export default function Quiz() {
         className="trivia-item-container"
       >
         {triviaItemElems}
-        <button>Check answers</button>
+        <div>
+          <button className="trivia-item-container__button">
+            Check answers
+          </button>
+        </div>
       </form>
     </>
   );
