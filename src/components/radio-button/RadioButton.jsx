@@ -7,6 +7,7 @@ export default function RadioButton({
   name,
   handleChange,
   id,
+  required,
 }) {
   return (
     <div className="radio-button">
@@ -16,6 +17,7 @@ export default function RadioButton({
         value={value}
         id={id}
         onChange={handleChange}
+        required={required}
       />
       <label htmlFor={id}>{labelText}</label>
     </div>
