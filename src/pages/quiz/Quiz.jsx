@@ -29,7 +29,7 @@ export default function Quiz() {
     // reset the form data
     reset();
     fetch(
-      "https://opentdb.com/api.php?amount=5&category=10&difficulty=easy&type=multiple"
+      "https://opentdb.com/api.php?amount=8&category=10&difficulty=easy&type=multiple"
     )
       .then((res) => checkResponseOk(res))
       .then((res) => res.json())
