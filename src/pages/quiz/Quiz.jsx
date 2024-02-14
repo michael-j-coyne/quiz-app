@@ -24,7 +24,7 @@ export default function Quiz() {
     )
       .then((res) => checkResponseOk(res))
       .then((res) => res.json())
-      .then((json) => toObjects(json))
+      .then((json) => toTriviaItemsObject(json))
       .then((triviaItemsObj) => {
         setTriviaItems(triviaItemsObj);
         return triviaItemsObj;
@@ -50,21 +50,26 @@ export default function Quiz() {
     }));
   }
 
-  function toObjects(response) {
+  function toTriviaItemsObject(response) {
     // What if there is no response.results?
-    const obj = {};
+
+    const triviaItemsObject = {};
+
+    const triviaItemObject = (triviaItem) => ({
+      question: decode(triviaItem.question),
+      options: randomizeArray([
+        ...triviaItem.incorrect_answers.map((ans) => decode(ans)),
+        decode(triviaItem.correct_answer),
+      ]),
+      answer: triviaItem.correct_answer,
+    });
+
     response.results.forEach(
       (triviaItem) =>
-        (obj[nanoid()] = {
-          question: decode(triviaItem.question),
-          options: randomizeArray([
-            ...triviaItem.incorrect_answers.map((ans) => decode(ans)),
-            decode(triviaItem.correct_answer),
-          ]),
-          answer: triviaItem.correct_answer,
-        })
+        (triviaItemsObject[nanoid()] = triviaItemObject(triviaItem))
     );
-    return obj;
+
+    return triviaItemsObject;
   }
 
   function checkAnswers(event) {
