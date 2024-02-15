@@ -74,7 +74,7 @@ export default function Quiz() {
         ...triviaItem.incorrect_answers.map((ans) => decode(ans)),
         decode(triviaItem.correct_answer),
       ]),
-      answer: triviaItem.correct_answer,
+      answer: decode(triviaItem.correct_answer),
     });
 
     response.results.forEach(
