@@ -3,12 +3,15 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import "./quiz.css";
 
 export default function Quiz() {
   const [triviaItems, setTriviaItems] = useState({});
   const [componentId, setComponentId] = useState(nanoid());
   const [selectedAnswers, setSelectedAnswers] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -29,15 +32,22 @@ export default function Quiz() {
   const randomizeArray = (arr) => arr.sort((a, b) => 0.5 - Math.random());
 
   function getData() {
-    fetch("https://opentdb.com/api.php?amount=3&difficulty=easy&type=multiple")
-      .then((res) => checkResponseOk(res))
-      .then((res) => res.json())
-      .then((json) => toTriviaItemsObject(json))
-      .then((triviaItemsObj) => {
-        setTriviaItems(triviaItemsObj);
-        return triviaItemsObj;
-      })
-      .catch((error) => console.log(error));
+    (async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `https://opentdb.com/api.php?amount=${numQuestions}&difficulty=easy&type=multiple`
+        );
+        checkResponseOk(res);
+        const json = await res.json();
+
+        setTriviaItems(toTriviaItemsObject(json));
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }
 
   useEffect(getData, []);
@@ -143,23 +153,45 @@ export default function Quiz() {
     );
   });
 
+  const triviaItemSkeletons = new Array(numQuestions)
+    .fill(0)
+    .map((val, idx) => (
+      <div key={idx} className="trivia-item">
+        <div className="trivia-item__title">
+          <Skeleton />
+        </div>
+        <div className="trivia-item__options-container">
+          <Skeleton width={64} />
+          <Skeleton width={64} />
+          <Skeleton width={64} />
+          <Skeleton width={64} />
+        </div>
+        <hr className="trivia-item__line"></hr>
+      </div>
+    ));
+
   return (
     <>
       <form
         onSubmit={handleSubmit(setSelectedAnswers)}
         className="trivia-item-container"
       >
-        {triviaItemElems}
+        {triviaItemElems.length > 0 && !isLoading
+          ? triviaItemElems
+          : triviaItemSkeletons}
         <div className="trivia-item-container__button-container">
-          {/* Add skeleton */}
-          {answersSubmitted && <h3>{numQuestionsCorrect()}</h3>}
-          <button
-            type={answersSubmitted ? "button" : "submit"}
-            onClick={answersSubmitted ? getData : null}
-            className="trivia-item-container__button"
-          >
-            {answersSubmitted ? "Play again" : "Check answers"}
-          </button>
+          {answersSubmitted && !isLoading && <h3>{numQuestionsCorrect()}</h3>}
+          {triviaItemElems.length > 0 && !isLoading ? (
+            <button
+              type={answersSubmitted ? "button" : "submit"}
+              onClick={answersSubmitted ? getData : null}
+              className="trivia-item-container__button"
+            >
+              {answersSubmitted ? "Play again" : "Check answers"}
+            </button>
+          ) : (
+            <Skeleton width={120} height={50} />
+          )}
         </div>
       </form>
     </>
