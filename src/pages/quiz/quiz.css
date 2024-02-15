@@ -14,7 +14,7 @@
 
   color: #f5f7fb;
   text-align: center;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
@@ -56,7 +56,7 @@
   padding: 2px 4px;
   margin-bottom: 2px;
 
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   background: #ffcccc;
 }
 
@@ -67,12 +67,15 @@
 /* The radio-button block */
 .radio-button {
   --option-selected-color: 214, 219, 245;
+  border-radius: 8px;
 
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+/* We don't want to display the input itself since we are trying to make the
+radio input look like a button. The input's *label* will take the place of the input. */
 .radio-button input {
   width: 0;
 }
@@ -90,7 +93,7 @@
 
   background: transparent;
   font-weight: 500;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
 
   &:hover {
     background-color: rgba(var(--option-selected-color), 0.35);
@@ -98,14 +101,38 @@
   }
 }
 
+/* CSS magic to style the label if input is focused */
 .radio-button input[type="radio"]:focus + label {
   outline: 5px auto -webkit-focus-ring-color;
 }
 
+/* CSS Magic to style the label if the input is checked */
 .radio-button input[type="radio"]:checked + label {
   background: rgb(var(--option-selected-color));
 
   &:hover {
     background-color: rgb(var(--option-selected-color));
   }
+}
+
+.radio-button_faded {
+  opacity: 0.5;
+}
+
+.radio-button_correct-ans {
+  background: #94d7a2;
+}
+
+/* Because we are using the CSS magic above, we need to apply these styles
+at the same specificty, unfortunately. */
+.radio-button_correct-ans input[type="radio"]:checked + label {
+  background: #94d7a2;
+}
+
+.radio-button_incorrect-ans input[type="radio"]:checked + label {
+  background: #f8bcbc;
+}
+
+.radio-button_selected {
+  outline: 5px solid Highlight;
 }

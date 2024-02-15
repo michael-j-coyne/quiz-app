@@ -8,6 +8,7 @@ import "./quiz.css";
 export default function Quiz() {
   const [triviaItems, setTriviaItems] = useState({});
   const [componentId, setComponentId] = useState(nanoid());
+  const [selectedAnswers, setSelectedAnswers] = useState();
   const {
     register,
     handleSubmit,
@@ -15,6 +16,8 @@ export default function Quiz() {
     formState: { errors },
   } = useForm();
   const numQuestions = 5;
+
+  const answersSubmitted = selectedAnswers !== undefined;
 
   function checkResponseOk(res) {
     if (!res.ok) {
@@ -28,9 +31,7 @@ export default function Quiz() {
   useEffect(() => {
     // reset the form data
     reset();
-    fetch(
-      "https://opentdb.com/api.php?amount=8&category=10&difficulty=easy&type=multiple"
-    )
+    fetch("https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple")
       .then((res) => checkResponseOk(res))
       .then((res) => res.json())
       .then((json) => toTriviaItemsObject(json))
@@ -64,45 +65,50 @@ export default function Quiz() {
     return triviaItemsObject;
   }
 
-  function checkAnswers(data) {
-    console.log("you checked the answers");
-    Object.entries(data).forEach(([itemId, answer]) => {
-      if (answer != triviaItems[itemId].answer) {
-        console.log(
-          `${answer} is incorrect! Correct answer is ${triviaItems[itemId].answer}`
-        );
-      } else {
-        console.log(`${answer} is correct!`);
-      }
-    });
+  function generateOptions(options, itemId) {
+    function generateBtnClass(option) {
+      let btnClass = "radio-button";
+      // answers haven't been submitted
+      if (!answersSubmitted) return btnClass;
+
+      const isSelected = option === selectedAnswers[itemId];
+      const isCorrect = option === triviaItems[itemId].answer;
+
+      return (
+        btnClass +
+        (isCorrect ? " radio-button_correct-ans" : "") +
+        (isSelected ? " radio-button_selected" : " radio-button_faded") +
+        (isSelected && !isCorrect ? " radio-button_incorrect-ans" : "")
+      );
+    }
+
+    const uniqueId = (idx) => `${itemId}_option-${idx + 1}_${componentId}`;
+
+    return options.map((option, index) => (
+      <div key={uniqueId(index)} className={generateBtnClass(option)}>
+        <input
+          type="radio"
+          name={itemId}
+          value={option}
+          id={uniqueId(index)}
+          disabled={answersSubmitted}
+          {...register(itemId, { required: true })}
+          onKeyDown={(e) => {
+            e.key === "Enter" && e.preventDefault();
+          }}
+        />
+        <label htmlFor={uniqueId(index)}>{option}</label>
+      </div>
+    ));
   }
 
   const triviaItemElems = Object.entries(triviaItems).map(([itemId, item]) => {
-    const optionElems = item.options.map((option, index) => {
-      const identifier = `${itemId}_option-${index + 1}_${componentId}`;
-
-      // The options for answers to the question
-      return (
-        <div key={identifier} className="radio-button">
-          <input
-            type="radio"
-            name={itemId}
-            value={option}
-            id={identifier}
-            {...register(itemId, { required: true })}
-            onKeyDown={(e) => {
-              e.key === "Enter" && e.preventDefault();
-            }}
-          />
-          <label htmlFor={identifier}>{option}</label>
-        </div>
-      );
-    });
-
     return (
       <fieldset key={itemId} className="trivia-item">
         <legend className="trivia-item__title">{item.question}</legend>
-        <div className="trivia-item__options-container">{optionElems}</div>
+        <div className="trivia-item__options-container">
+          {generateOptions(item.options, itemId)}
+        </div>
         <ErrorMessage
           errors={errors}
           name={itemId}
@@ -120,12 +126,15 @@ export default function Quiz() {
   return (
     <>
       <form
-        onSubmit={handleSubmit(checkAnswers)}
+        onSubmit={handleSubmit(setSelectedAnswers)}
         className="trivia-item-container"
       >
         {triviaItemElems}
         <div>
-          <button className="trivia-item-container__button">
+          <button
+            disabled={answersSubmitted}
+            className="trivia-item-container__button"
+          >
             Check answers
           </button>
         </div>
