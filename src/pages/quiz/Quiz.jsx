@@ -28,10 +28,8 @@ export default function Quiz() {
 
   const randomizeArray = (arr) => arr.sort((a, b) => 0.5 - Math.random());
 
-  useEffect(() => {
-    // reset the form data
-    reset();
-    fetch("https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple")
+  function getData() {
+    fetch("https://opentdb.com/api.php?amount=3&difficulty=easy&type=multiple")
       .then((res) => checkResponseOk(res))
       .then((res) => res.json())
       .then((json) => toTriviaItemsObject(json))
@@ -40,7 +38,15 @@ export default function Quiz() {
         return triviaItemsObj;
       })
       .catch((error) => console.log(error));
-  }, []);
+  }
+
+  useEffect(getData, []);
+
+  useEffect(() => {
+    // reset the form data
+    reset();
+    setSelectedAnswers();
+  }, [triviaItems]);
 
   function toTriviaItemsObject(response) {
     // What if there is no response.results?
@@ -149,7 +155,7 @@ export default function Quiz() {
           {answersSubmitted && <h3>{numQuestionsCorrect()}</h3>}
           <button
             type={answersSubmitted ? "button" : "submit"}
-            onClick={answersSubmitted ? () => console.log("hi") : null}
+            onClick={answersSubmitted ? getData : null}
             className="trivia-item-container__button"
           >
             {answersSubmitted ? "Play again" : "Check answers"}
