@@ -65,6 +65,20 @@ export default function Quiz() {
     return triviaItemsObject;
   }
 
+  function numQuestionsCorrect() {
+    let numCorrect = 0;
+    const totalQuestions = Object.keys(triviaItems).length;
+    if (totalQuestions === 0 || !answersSubmitted)
+      return "You scored 0 correct answers";
+
+    Object.entries(selectedAnswers).forEach(([itemId, answer]) => {
+      const correctAnswer = triviaItems[itemId].answer;
+      if (answer === correctAnswer) numCorrect++;
+    });
+
+    return `You scored ${numCorrect} / ${totalQuestions} correct answers`;
+  }
+
   function generateOptions(options, itemId) {
     function generateBtnClass(option) {
       let btnClass = "radio-button";
@@ -130,12 +144,15 @@ export default function Quiz() {
         className="trivia-item-container"
       >
         {triviaItemElems}
-        <div>
+        <div className="trivia-item-container__button-container">
+          {/* Add skeleton */}
+          {answersSubmitted && <h3>{numQuestionsCorrect()}</h3>}
           <button
-            disabled={answersSubmitted}
+            type={answersSubmitted ? "button" : "submit"}
+            onClick={answersSubmitted ? () => console.log("hi") : null}
             className="trivia-item-container__button"
           >
-            Check answers
+            {answersSubmitted ? "Play again" : "Check answers"}
           </button>
         </div>
       </form>
