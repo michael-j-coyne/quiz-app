@@ -28,13 +28,6 @@ export default function Quiz() {
 
   const answersSubmitted = selectedAnswers !== undefined;
 
-  function checkResponseOk(res) {
-    if (!res.ok) {
-      throw new Error(`${res.status} ${res.statusText}`);
-    }
-    return res;
-  }
-
   const randomizeArray = (arr) => arr.sort((a, b) => 0.5 - Math.random());
 
   function getData() {
@@ -44,14 +37,20 @@ export default function Quiz() {
         const res = await fetch(
           `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple`
         );
-        checkResponseOk(res);
+
+        if (res.status === 429) {
+          setTimeout(getData, 1500);
+          throw new Error(`${res.status} (Too many requests)`);
+        } else if (!res.ok) {
+          throw new Error(`${res.status} ${res.statusText}`);
+        }
+
         const json = await res.json();
 
         setTriviaItems(toTriviaItemsObject(json));
+        setIsLoading(false);
       } catch (error) {
         console.error(error);
-      } finally {
-        setIsLoading(false);
       }
     })();
   }
