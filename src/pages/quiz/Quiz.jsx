@@ -90,6 +90,9 @@ export default function Quiz() {
             value={option}
             id={identifier}
             {...register(itemId, { required: true })}
+            onKeyDown={(e) => {
+              e.key === "Enter" && e.preventDefault();
+            }}
           />
           <label htmlFor={identifier}>{option}</label>
         </div>
