@@ -4,10 +4,17 @@ import { ErrorMessage } from "@hookform/error-message";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
 import Skeleton from "react-loading-skeleton";
+import { useLocation } from "react-router-dom";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./quiz.css";
 
 export default function Quiz() {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  const amount = Number(searchParams.get("amount")) || 5;
+  const difficulty = searchParams.get("difficulty") || "easy";
+
   const [triviaItems, setTriviaItems] = useState({});
   const [componentId, setComponentId] = useState(nanoid());
   const [selectedAnswers, setSelectedAnswers] = useState();
@@ -18,7 +25,6 @@ export default function Quiz() {
     reset,
     formState: { errors },
   } = useForm();
-  const numQuestions = 5;
 
   const answersSubmitted = selectedAnswers !== undefined;
 
@@ -36,7 +42,7 @@ export default function Quiz() {
       try {
         setIsLoading(true);
         const res = await fetch(
-          `https://opentdb.com/api.php?amount=${numQuestions}&difficulty=easy&type=multiple`
+          `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple`
         );
         checkResponseOk(res);
         const json = await res.json();
@@ -153,22 +159,20 @@ export default function Quiz() {
     );
   });
 
-  const triviaItemSkeletons = new Array(numQuestions)
-    .fill(0)
-    .map((val, idx) => (
-      <div key={idx} className="trivia-item">
-        <div className="trivia-item__title">
-          <Skeleton />
-        </div>
-        <div className="trivia-item__options-container">
-          <Skeleton width={64} />
-          <Skeleton width={64} />
-          <Skeleton width={64} />
-          <Skeleton width={64} />
-        </div>
-        <hr className="trivia-item__line"></hr>
+  const triviaItemSkeletons = new Array(amount).fill(0).map((val, idx) => (
+    <div key={idx} className="trivia-item">
+      <div className="trivia-item__title">
+        <Skeleton />
       </div>
-    ));
+      <div className="trivia-item__options-container">
+        <Skeleton width={64} />
+        <Skeleton width={64} />
+        <Skeleton width={64} />
+        <Skeleton width={64} />
+      </div>
+      <hr className="trivia-item__line"></hr>
+    </div>
+  ));
 
   return (
     <>
