@@ -4,6 +4,7 @@ import "./home.css";
 export default function Home() {
   return (
     <div className="home">
+      <div className="home__spacer"></div>
       <h1 className="home__title">Quiz yourself!</h1>
       <p className="home__description">
         Test your knowledge of various topics!
