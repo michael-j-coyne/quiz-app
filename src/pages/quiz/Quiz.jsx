@@ -49,7 +49,7 @@ export default function Quiz() {
         setTimeout(
           () => fetchTrivia(token).catch((e) => console.error(e)),
           1800
-        ); // retry
+        );
         throw new Error(`${res.status} (Too many requests)`);
       } else if (!res.ok) {
         console.error(
@@ -63,6 +63,7 @@ export default function Quiz() {
       // token not found
       if (json.response_code === 3) {
         const newToken = await fetchToken();
+        setToken(newToken);
         return fetchTrivia(newToken);
       }
 
@@ -85,10 +86,10 @@ export default function Quiz() {
 
       const json = await res.json();
       const resToken = json.token;
-      setToken(resToken);
       return resToken;
     } catch (e) {
       console.error(e);
+      throw e;
     }
   }
 
