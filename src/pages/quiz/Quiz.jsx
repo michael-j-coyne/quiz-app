@@ -44,7 +44,7 @@ export default function Quiz() {
 
       if (res.status === 429) {
         throw new Error(`${res.status} (Too many requests)`, {
-          code: "RateLimit",
+          cause: "RateLimit",
         });
       } else if (!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`);
@@ -55,7 +55,7 @@ export default function Quiz() {
       // token not found
       if (json.response_code === 3) {
         throw new Error(`Response code: 3 - invalid token`, {
-          code: "InvalidToken",
+          cause: "InvalidToken",
         });
       }
 
@@ -86,11 +86,12 @@ export default function Quiz() {
     try {
       const trivia = await fetchTrivia(token);
     } catch (e) {
-      if (e.code === "RateLimit") {
+      if (e.cause === "RateLimit") {
         console.log("rate limited");
-      } else if (e.code === "InvalidToken") {
+      } else if (e.cause === "InvalidToken") {
         console.log("token invalid");
       } else {
+        console.log("other type of error");
         throw e;
       }
     }
