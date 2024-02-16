@@ -35,7 +35,7 @@ export default function Quiz() {
   async function fetchTrivia(token) {
     if (!token) {
       console.error("Tried to fetch data without token!");
-      return;
+      throw new Error("Tried to fetch data without token");
     }
 
     try {
