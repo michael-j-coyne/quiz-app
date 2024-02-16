@@ -74,43 +74,54 @@ export default function Quiz() {
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 
       const json = await res.json();
+
       const resToken = json.token;
       return resToken;
     } catch (e) {
-      console.error(e);
       throw e;
     }
   }
 
-  async function fetchTriviaRetry(token) {
+  async function fetchTriviaRetry(token, maxRetries) {
+    if (maxRetries < 0) {
+      throw new Error("Could not fetch data. Maximum retries exceeded.");
+    }
+
     try {
       const trivia = await fetchTrivia(token);
+      return trivia;
     } catch (e) {
       if (e.cause === "RateLimit") {
-        console.log("rate limited");
+        // Wait for 1800ms, then try again
+        await new Promise((resolve) => setTimeout(resolve, 1800));
+
+        return fetchTriviaRetry(token, maxRetries - 1);
       } else if (e.cause === "InvalidToken") {
-        console.log("token invalid");
+        const newToken = await fetchToken();
+        setToken(newToken);
+
+        return fetchTriviaRetry(newToken, maxRetries - 1);
       } else {
-        console.log("other type of error");
         throw e;
       }
     }
   }
 
-  useEffect(() => {
+  async function initialize() {
     const localToken = localStorage.getItem("triviaToken");
+    const token = localToken ? localToken : await fetchToken();
+    setToken(token);
 
-    if (localToken) {
-      setToken(localToken);
-      fetchTrivia(localToken)
-        .then((trivia) => setTriviaItems(trivia))
-        .catch((e) => console.error(e));
-    } else {
-      fetchToken()
-        .then((token) => fetchTrivia(token))
-        .then((trivia) => setTriviaItems(trivia))
-        .catch((e) => console.error(e));
+    try {
+      const trivia = await fetchTriviaRetry(token, 6);
+      setTriviaItems(trivia);
+    } catch (e) {
+      console.error(e);
     }
+  }
+
+  useEffect(() => {
+    initialize();
   }, []);
 
   useEffect(() => {
