@@ -46,7 +46,10 @@ export default function Quiz() {
       );
 
       if (res.status === 429) {
-        setTimeout(() => fetchTrivia(token), 1800);
+        setTimeout(
+          () => fetchTrivia(token).catch((e) => console.error(e)),
+          1800
+        ); // retry
         throw new Error(`${res.status} (Too many requests)`);
       } else if (!res.ok) {
         console.error(
@@ -60,14 +63,15 @@ export default function Quiz() {
       // token not found
       if (json.response_code === 3) {
         const newToken = await fetchToken();
-        fetchTrivia(newToken);
+        return fetchTrivia(newToken);
       }
 
-      setTriviaItems(toTriviaItemsObject(json));
-
       setIsLoading(false);
+
+      return toTriviaItemsObject(json);
     } catch (e) {
       console.error(e);
+      throw e;
     }
   }
 
@@ -80,7 +84,6 @@ export default function Quiz() {
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
 
       const json = await res.json();
-      // and what if I can't get the token?
       const resToken = json.token;
       setToken(resToken);
       return resToken;
@@ -90,17 +93,19 @@ export default function Quiz() {
   }
 
   useEffect(() => {
-    (async () => {
-      const localToken = localStorage.getItem("triviaToken");
-      if (localToken) {
-        setToken(localToken);
-        fetchTrivia(localToken);
-      } else {
-        // And what if we failed to fetch the token?
-        await fetchToken();
-        fetchTrivia(token); // component-level token
-      }
-    })();
+    const localToken = localStorage.getItem("triviaToken");
+
+    if (localToken) {
+      setToken(localToken);
+      fetchTrivia(localToken)
+        .then((trivia) => setTriviaItems(trivia))
+        .catch((e) => console.error(e));
+    } else {
+      fetchToken()
+        .then((token) => fetchTrivia(token))
+        .then((trivia) => setTriviaItems(trivia))
+        .catch((e) => console.error(e));
+    }
   }, []);
 
   useEffect(() => {
@@ -236,7 +241,15 @@ export default function Quiz() {
           {triviaItemElems.length > 0 && !isLoading ? (
             <button
               type={answersSubmitted ? "button" : "submit"}
-              onClick={answersSubmitted ? () => fetchTrivia(token) : null}
+              onClick={
+                answersSubmitted
+                  ? () => {
+                      fetchTrivia(token)
+                        .then((trivia) => setTriviaItems(trivia))
+                        .catch((e) => console.error(e));
+                    }
+                  : null
+              }
               className="trivia-item-container__button"
             >
               {answersSubmitted ? "Play again" : "Check answers"}
