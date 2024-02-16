@@ -89,15 +89,14 @@ export default function Quiz() {
   function numQuestionsCorrect() {
     let numCorrect = 0;
     const totalQuestions = Object.keys(triviaItems).length;
-    if (totalQuestions === 0 || !answersSubmitted)
-      return "You scored 0 correct answers";
+    if (totalQuestions === 0 || !answersSubmitted) return "You got 0 correct";
 
     Object.entries(selectedAnswers).forEach(([itemId, answer]) => {
       const correctAnswer = triviaItems[itemId].answer;
       if (answer === correctAnswer) numCorrect++;
     });
 
-    return `You scored ${numCorrect} / ${totalQuestions} correct answers`;
+    return `You got ${numCorrect} / ${totalQuestions} correct`;
   }
 
   function generateOptions(options, itemId) {
