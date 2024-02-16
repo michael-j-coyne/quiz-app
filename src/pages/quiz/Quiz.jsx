@@ -56,6 +56,15 @@ export default function Quiz() {
       }
 
       const json = await res.json();
+
+      // token not found
+      if (json.response_code === 3) {
+        console.log("response is indeed the numbe r3");
+        const newToken = await fetchToken();
+        console.log(`newtoken is ${newToken}`);
+        getData(newToken);
+      }
+
       setTriviaItems(toTriviaItemsObject(json));
 
       setIsLoading(false);
@@ -76,6 +85,7 @@ export default function Quiz() {
       // and what if I can't get the token?
       const resToken = json.token;
       setToken(resToken);
+      return resToken;
     } catch (e) {
       console.error(e);
     }
@@ -88,6 +98,7 @@ export default function Quiz() {
         setToken(localToken);
         getData(localToken);
       } else {
+        // And what if we failed to fetch the token?
         await fetchToken();
         getData(token); // component-level token
       }
