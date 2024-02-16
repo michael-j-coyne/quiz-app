@@ -34,27 +34,19 @@ export default function Quiz() {
 
   async function fetchTrivia(token) {
     if (!token) {
-      console.error("Tried to fetch data without token!");
       throw new Error("Tried to fetch data without token");
     }
 
     try {
-      setIsLoading(true);
-
       const res = await fetch(
         `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple&token=${token}`
       );
 
       if (res.status === 429) {
-        setTimeout(
-          () => fetchTrivia(token).catch((e) => console.error(e)),
-          1800
-        );
-        throw new Error(`${res.status} (Too many requests)`);
+        throw new Error(`${res.status} (Too many requests)`, {
+          code: "RateLimit",
+        });
       } else if (!res.ok) {
-        console.error(
-          "Something unexpected happened. You may want to indicate this to the user somehow."
-        );
         throw new Error(`${res.status} ${res.statusText}`);
       }
 
@@ -62,16 +54,13 @@ export default function Quiz() {
 
       // token not found
       if (json.response_code === 3) {
-        const newToken = await fetchToken();
-        setToken(newToken);
-        return fetchTrivia(newToken);
+        throw new Error(`Response code: 3 - invalid token`, {
+          code: "InvalidToken",
+        });
       }
-
-      setIsLoading(false);
 
       return toTriviaItemsObject(json);
     } catch (e) {
-      console.error(e);
       throw e;
     }
   }
