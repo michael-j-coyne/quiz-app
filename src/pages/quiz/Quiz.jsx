@@ -82,6 +82,20 @@ export default function Quiz() {
     }
   }
 
+  async function fetchTriviaRetry(token) {
+    try {
+      const trivia = await fetchTrivia(token);
+    } catch (e) {
+      if (e.code === "RateLimit") {
+        console.log("rate limited");
+      } else if (e.code === "InvalidToken") {
+        console.log("token invalid");
+      } else {
+        throw e;
+      }
+    }
+  }
+
   useEffect(() => {
     const localToken = localStorage.getItem("triviaToken");
 
