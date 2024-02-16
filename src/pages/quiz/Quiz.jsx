@@ -19,6 +19,8 @@ export default function Quiz() {
   const [componentId, setComponentId] = useState(nanoid());
   const [selectedAnswers, setSelectedAnswers] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -30,32 +32,71 @@ export default function Quiz() {
 
   const randomizeArray = (arr) => arr.sort((a, b) => 0.5 - Math.random());
 
-  function getData() {
-    (async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(
-          `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple`
+  async function getData(token) {
+    if (!token) {
+      console.error("Tried to fetch data without token!");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const res = await fetch(
+        `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple&token=${token}`
+      );
+
+      if (res.status === 429) {
+        setTimeout(() => getData(token), 1800);
+        throw new Error(`${res.status} (Too many requests)`);
+      } else if (!res.ok) {
+        console.error(
+          "Something unexpected happened. You may want to indicate this to the user somehow."
         );
-
-        if (res.status === 429) {
-          setTimeout(getData, 1500);
-          throw new Error(`${res.status} (Too many requests)`);
-        } else if (!res.ok) {
-          throw new Error(`${res.status} ${res.statusText}`);
-        }
-
-        const json = await res.json();
-
-        setTriviaItems(toTriviaItemsObject(json));
-        setIsLoading(false);
-      } catch (error) {
-        console.error(error);
+        throw new Error(`${res.status} ${res.statusText}`);
       }
-    })();
+
+      const json = await res.json();
+      setTriviaItems(toTriviaItemsObject(json));
+
+      setIsLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  useEffect(getData, []);
+  async function fetchToken() {
+    try {
+      const res = await fetch(
+        "https://opentdb.com/api_token.php?command=request"
+      );
+
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
+      const json = await res.json();
+      // and what if I can't get the token?
+      const resToken = json.token;
+      setToken(resToken);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    (async () => {
+      const localToken = localStorage.getItem("triviaToken");
+      if (localToken) {
+        setToken(localToken);
+        getData(localToken);
+      } else {
+        await fetchToken();
+        getData(token); // component-level token
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    token && localStorage.setItem("triviaToken", token);
+  }, [token]);
 
   useEffect(() => {
     // reset the form data
@@ -186,7 +227,7 @@ export default function Quiz() {
           {triviaItemElems.length > 0 && !isLoading ? (
             <button
               type={answersSubmitted ? "button" : "submit"}
-              onClick={answersSubmitted ? getData : null}
+              onClick={answersSubmitted ? () => getData(token) : null}
               className="trivia-item-container__button"
             >
               {answersSubmitted ? "Play again" : "Check answers"}
