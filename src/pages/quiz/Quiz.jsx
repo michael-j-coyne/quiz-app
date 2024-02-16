@@ -32,7 +32,7 @@ export default function Quiz() {
 
   const randomizeArray = (arr) => arr.sort((a, b) => 0.5 - Math.random());
 
-  async function getData(token) {
+  async function fetchTrivia(token) {
     if (!token) {
       console.error("Tried to fetch data without token!");
       return;
@@ -46,7 +46,7 @@ export default function Quiz() {
       );
 
       if (res.status === 429) {
-        setTimeout(() => getData(token), 1800);
+        setTimeout(() => fetchTrivia(token), 1800);
         throw new Error(`${res.status} (Too many requests)`);
       } else if (!res.ok) {
         console.error(
@@ -59,10 +59,8 @@ export default function Quiz() {
 
       // token not found
       if (json.response_code === 3) {
-        console.log("response is indeed the numbe r3");
         const newToken = await fetchToken();
-        console.log(`newtoken is ${newToken}`);
-        getData(newToken);
+        fetchTrivia(newToken);
       }
 
       setTriviaItems(toTriviaItemsObject(json));
@@ -96,11 +94,11 @@ export default function Quiz() {
       const localToken = localStorage.getItem("triviaToken");
       if (localToken) {
         setToken(localToken);
-        getData(localToken);
+        fetchTrivia(localToken);
       } else {
         // And what if we failed to fetch the token?
         await fetchToken();
-        getData(token); // component-level token
+        fetchTrivia(token); // component-level token
       }
     })();
   }, []);
@@ -238,7 +236,7 @@ export default function Quiz() {
           {triviaItemElems.length > 0 && !isLoading ? (
             <button
               type={answersSubmitted ? "button" : "submit"}
-              onClick={answersSubmitted ? () => getData(token) : null}
+              onClick={answersSubmitted ? () => fetchTrivia(token) : null}
               className="trivia-item-container__button"
             >
               {answersSubmitted ? "Play again" : "Check answers"}
