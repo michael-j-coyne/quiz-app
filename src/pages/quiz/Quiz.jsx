@@ -32,9 +32,11 @@ export default function Quiz() {
 
   const randomizeArray = (arr) => arr.sort((a, b) => 0.5 - Math.random());
 
-  async function fetchTrivia(token) {
+  async function fetchTrivia(token, { maxRetries, retryDelayMs }) {
     if (!token) {
       throw new Error("Tried to fetch data without token");
+    } else if (maxRetries < 0) {
+      throw new Error("Could not fetch data. Max retries exceeded.");
     }
 
     try {
@@ -43,8 +45,10 @@ export default function Quiz() {
       );
 
       if (res.status === 429) {
-        throw new Error(`${res.status} (Too many requests)`, {
-          cause: "RateLimit",
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+        return fetchTrivia(token, {
+          maxRetries: maxRetries - 1,
+          retryDelayMs: retryDelayMs,
         });
       } else if (!res.ok) {
         throw new Error(`${res.status} ${res.statusText}`);
@@ -54,8 +58,12 @@ export default function Quiz() {
 
       // token not found
       if (json.response_code === 3) {
-        throw new Error(`Response code: 3 - invalid token`, {
-          cause: "InvalidToken",
+        const newToken = await fetchToken();
+        setToken(newToken);
+        await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
+        return fetchTrivia(newToken, {
+          maxRetries: maxRetries - 1,
+          retryDelayMs: retryDelayMs,
         });
       }
 
@@ -82,38 +90,16 @@ export default function Quiz() {
     }
   }
 
-  async function fetchTriviaRetry(token, maxRetries) {
-    if (maxRetries < 0) {
-      throw new Error("Could not fetch data. Maximum retries exceeded.");
-    }
-
-    try {
-      const trivia = await fetchTrivia(token);
-      return trivia;
-    } catch (e) {
-      if (e.cause === "RateLimit") {
-        // Wait for 1800ms, then try again
-        await new Promise((resolve) => setTimeout(resolve, 1800));
-
-        return fetchTriviaRetry(token, maxRetries - 1);
-      } else if (e.cause === "InvalidToken") {
-        const newToken = await fetchToken();
-        setToken(newToken);
-
-        return fetchTriviaRetry(newToken, maxRetries - 1);
-      } else {
-        throw e;
-      }
-    }
-  }
-
   async function initialize() {
     const localToken = localStorage.getItem("triviaToken");
     const token = localToken ? localToken : await fetchToken();
     setToken(token);
 
     try {
-      const trivia = await fetchTriviaRetry(token, 6);
+      const trivia = await fetchTrivia(token, {
+        maxRetries: 6,
+        retryDelayMs: 1800,
+      });
       setTriviaItems(trivia);
     } catch (e) {
       console.error(e);
@@ -260,8 +246,12 @@ export default function Quiz() {
               onClick={
                 answersSubmitted
                   ? () => {
-                      fetchTrivia(token)
-                        .then((trivia) => setTriviaItems(trivia))
+                      setIsLoading(true);
+                      fetchTrivia(token, { maxRetries: 6, retryDelayMs: 1800 })
+                        .then((trivia) => {
+                          setTriviaItems(trivia);
+                          setIsLoading(false);
+                        })
                         .catch((e) => console.error(e));
                     }
                   : null
