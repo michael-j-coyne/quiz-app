@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import { ErrorMessage } from "@hookform/error-message";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
-import Skeleton from "react-loading-skeleton";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useLocation } from "react-router-dom";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./quiz.css";
@@ -244,27 +244,29 @@ export default function Quiz() {
 
   return (
     <>
-      <form
-        onSubmit={handleSubmit(setSelectedAnswers)}
-        className="trivia-item-container"
-      >
-        {triviaItemElems.length > 0 && !isLoading
-          ? triviaItemElems
-          : triviaItemSkeletons}
-        <div className="trivia-item-container__button-container">
-          {answersSubmitted && !isLoading && <h3>{numQuestionsCorrect()}</h3>}
-          <button
-            type={answersSubmitted ? "button" : "submit"}
-            onClick={answersSubmitted ? getNewQuestions : null}
-            className={`trivia-item-container__button${
-              isLoading ? " hidden" : ""
-            }`}
-          >
-            {answersSubmitted ? "Play again" : "Check answers"}
-          </button>
-          {isLoading && <Skeleton width={120} height={50} />}
-        </div>
-      </form>
+      <SkeletonTheme baseColor="#D3D3D3">
+        <form
+          onSubmit={handleSubmit(setSelectedAnswers)}
+          className="trivia-item-container"
+        >
+          {triviaItemElems.length > 0 && !isLoading
+            ? triviaItemElems
+            : triviaItemSkeletons}
+          <div className="trivia-item-container__button-container">
+            {answersSubmitted && !isLoading && <h3>{numQuestionsCorrect()}</h3>}
+            <button
+              type={answersSubmitted ? "button" : "submit"}
+              onClick={answersSubmitted ? getNewQuestions : null}
+              className={`trivia-item-container__button${
+                isLoading ? " hidden" : ""
+              }`}
+            >
+              {answersSubmitted ? "Play again" : "Check answers"}
+            </button>
+            {isLoading && <Skeleton width={120} height={50} />}
+          </div>
+        </form>
+      </SkeletonTheme>
     </>
   );
 }
