@@ -88,6 +88,7 @@
 /* We don't want to display the input itself since we are trying to make the
 radio input look like a button. The input's *label* will take the place of the input. */
 .radio-button input {
+  opacity: 0;
   width: 0;
 }
 
