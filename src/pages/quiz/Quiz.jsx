@@ -231,6 +231,17 @@ export default function Quiz() {
     </div>
   ));
 
+  function getNewQuestions() {
+    document.activeElement.blur();
+    setIsLoading(true);
+    fetchTrivia(token, { maxRetries: 6, retryDelayMs: 1800 })
+      .then((trivia) => {
+        setTriviaItems(trivia);
+        setIsLoading(false);
+      })
+      .catch((e) => console.error(e));
+  }
+
   return (
     <>
       <form
@@ -244,20 +255,7 @@ export default function Quiz() {
           {answersSubmitted && !isLoading && <h3>{numQuestionsCorrect()}</h3>}
           <button
             type={answersSubmitted ? "button" : "submit"}
-            onClick={
-              answersSubmitted
-                ? () => {
-                    document.activeElement.blur();
-                    setIsLoading(true);
-                    fetchTrivia(token, { maxRetries: 6, retryDelayMs: 1800 })
-                      .then((trivia) => {
-                        setTriviaItems(trivia);
-                        setIsLoading(false);
-                      })
-                      .catch((e) => console.error(e));
-                  }
-                : null
-            }
+            onClick={answersSubmitted ? getNewQuestions : null}
             className={(() => {
               console.log(`isloading ${isLoading}`);
               return `trivia-item-container__button${
