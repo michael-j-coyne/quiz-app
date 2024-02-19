@@ -110,6 +110,7 @@ radio input look like a button. The input's *label* will take the place of the i
 
 /* CSS magic to style the label if input is focused */
 .radio-button input[type="radio"]:focus + label {
+  outline: 5px auto Highlight;
   outline: 5px auto -webkit-focus-ring-color;
 }
 
