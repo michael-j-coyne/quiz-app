@@ -7,7 +7,7 @@
 
 .trivia-item-container__button {
   background: #4d5b9e;
-  border: 0.8px solid black;
+  border: 0.8px;
   border-radius: 8px;
   width: 120px;
   padding: 10px 22px;
@@ -20,6 +20,10 @@
 
 .trivia-item-container__button:active {
   transform: scale(0.98);
+}
+
+.trivia-item-container__button:focus {
+  outline-offset: 3px;
 }
 
 .trivia-item-container__button-container {
