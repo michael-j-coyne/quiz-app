@@ -50,8 +50,8 @@ export default function Quiz() {
 
       const json = await res.json();
 
-      // token not found
-      if (json.response_code === 3) {
+      // 3 = token not found, 4 = all questions exhausted
+      if (json.response_code === 3 || json.response_code === 4) {
         const newToken = await fetchToken();
         setToken(newToken);
         await new Promise((resolve) => setTimeout(resolve, retryDelayMs));
