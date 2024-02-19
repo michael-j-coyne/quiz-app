@@ -4,22 +4,16 @@ import { ErrorMessage } from "@hookform/error-message";
 import { nanoid } from "nanoid";
 import { decode } from "html-entities";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useLocation } from "react-router-dom";
 import "react-loading-skeleton/dist/skeleton.css";
 import "./quiz.css";
 
 export default function Quiz() {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-
-  const amount = Number(searchParams.get("amount")) || 5;
-  const difficulty = searchParams.get("difficulty") || "easy";
-
   const [triviaItems, setTriviaItems] = useState({});
   const [componentId, setComponentId] = useState(nanoid());
   const [selectedAnswers, setSelectedAnswers] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState(null);
+  const numQuestions = 5;
 
   const {
     register,
@@ -41,7 +35,7 @@ export default function Quiz() {
 
     try {
       const res = await fetch(
-        `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&type=multiple&token=${token}`
+        `https://opentdb.com/api.php?amount=${numQuestions}&category=9&token=${token}`
       );
 
       if (res.status === 429) {
@@ -216,20 +210,22 @@ export default function Quiz() {
     );
   });
 
-  const triviaItemSkeletons = new Array(amount).fill(0).map((val, idx) => (
-    <div key={idx} className="trivia-item">
-      <div className="trivia-item__title">
-        <Skeleton />
+  const triviaItemSkeletons = new Array(numQuestions)
+    .fill(0)
+    .map((val, idx) => (
+      <div key={idx} className="trivia-item">
+        <div className="trivia-item__title">
+          <Skeleton />
+        </div>
+        <div className="trivia-item__options-container">
+          <Skeleton width={64} />
+          <Skeleton width={64} />
+          <Skeleton width={64} />
+          <Skeleton width={64} />
+        </div>
+        <hr className="trivia-item__line"></hr>
       </div>
-      <div className="trivia-item__options-container">
-        <Skeleton width={64} />
-        <Skeleton width={64} />
-        <Skeleton width={64} />
-        <Skeleton width={64} />
-      </div>
-      <hr className="trivia-item__line"></hr>
-    </div>
-  ));
+    ));
 
   function getNewQuestions() {
     document.activeElement.blur();
