@@ -96,11 +96,13 @@ export default function Quiz() {
     setToken(token);
 
     try {
+      setIsLoading(true);
       const trivia = await fetchTrivia(token, {
         maxRetries: 6,
         retryDelayMs: 1800,
       });
       setTriviaItems(trivia);
+      setIsLoading(false);
     } catch (e) {
       console.error(e);
     }
@@ -240,29 +242,32 @@ export default function Quiz() {
           : triviaItemSkeletons}
         <div className="trivia-item-container__button-container">
           {answersSubmitted && !isLoading && <h3>{numQuestionsCorrect()}</h3>}
-          {triviaItemElems.length > 0 && !isLoading ? (
-            <button
-              type={answersSubmitted ? "button" : "submit"}
-              onClick={
-                answersSubmitted
-                  ? () => {
-                      setIsLoading(true);
-                      fetchTrivia(token, { maxRetries: 6, retryDelayMs: 1800 })
-                        .then((trivia) => {
-                          setTriviaItems(trivia);
-                          setIsLoading(false);
-                        })
-                        .catch((e) => console.error(e));
-                    }
-                  : null
-              }
-              className="trivia-item-container__button"
-            >
-              {answersSubmitted ? "Play again" : "Check answers"}
-            </button>
-          ) : (
-            <Skeleton width={120} height={50} />
-          )}
+          <button
+            type={answersSubmitted ? "button" : "submit"}
+            onClick={
+              answersSubmitted
+                ? () => {
+                    document.activeElement.blur();
+                    setIsLoading(true);
+                    fetchTrivia(token, { maxRetries: 6, retryDelayMs: 1800 })
+                      .then((trivia) => {
+                        setTriviaItems(trivia);
+                        setIsLoading(false);
+                      })
+                      .catch((e) => console.error(e));
+                  }
+                : null
+            }
+            className={(() => {
+              console.log(`isloading ${isLoading}`);
+              return `trivia-item-container__button${
+                isLoading ? " hidden" : ""
+              }`;
+            })()}
+          >
+            {answersSubmitted ? "Play again" : "Check answers"}
+          </button>
+          {isLoading && <Skeleton width={120} height={50} />}
         </div>
       </form>
     </>
