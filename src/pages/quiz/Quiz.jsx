@@ -256,12 +256,9 @@ export default function Quiz() {
           <button
             type={answersSubmitted ? "button" : "submit"}
             onClick={answersSubmitted ? getNewQuestions : null}
-            className={(() => {
-              console.log(`isloading ${isLoading}`);
-              return `trivia-item-container__button${
-                isLoading ? " hidden" : ""
-              }`;
-            })()}
+            className={`trivia-item-container__button${
+              isLoading ? " hidden" : ""
+            }`}
           >
             {answersSubmitted ? "Play again" : "Check answers"}
           </button>
