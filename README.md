@@ -1,7 +1,3 @@
-# Quiz yourself!
+# Quiz app
 
-This fun quiz app lets your test your trivia knowledge in a range of subjects.
-
-Created with React + Vite.
-
-Questions are from the [Open Trivia DB](https://opentdb.com/api_config.php).
+A prototype quiz app that helped me learn about what I will need to do to create my "part game" web application
